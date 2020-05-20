@@ -3,6 +3,7 @@
 #include <chrono>
 #include <thread>
 #include <string>
+#include <cmath>
 #include "opencv2\opencv.hpp"
 #include <opencv2\videoio.hpp>
 #include "ImageProcessor.h"
@@ -46,22 +47,11 @@ std::string getOutputFileName(std::string input_file_name) {
 }
 
 
-// get input from command line for intensity
-float getRequiredIntensity(){
-	float intensity;
-	std::cout << "Enter denoising intensity (recommended 8.0 - 25.0) : ";
-	std::cin >> intensity;
-	std::cout << std::endl;
-	return intensity;
-}
-
-
 int main() {
 
 	// read input and output file name and denoising intensity from command line
 	std::string input_file_name  = getInputFileName();
 	std::string output_file_name = getOutputFileName(input_file_name);
-	float intensity              = getRequiredIntensity();
 
 	// set video and denoising intensity - recommended between 8.0 and 25.0 depending on noise level
 	cv::VideoCapture cap(input_file_name);
@@ -78,11 +68,12 @@ int main() {
 	}
 
 	// create video writer object and initialise processing unit
-	ImageProcessor proc(intensity, frame_height, frame_width);
-	cv::VideoWriter video("output.avi", cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), fps, cv::Size(frame_width, frame_height));
+	ImageProcessor proc(frame_height, frame_width);
+	cv::VideoWriter video(output_file_name, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), fps, cv::Size(frame_width, frame_height));
 
 	// iterate over every single frame in the video
 	int framecount = 1;
+
 	while (1) {
 
 		cv::Mat frame;

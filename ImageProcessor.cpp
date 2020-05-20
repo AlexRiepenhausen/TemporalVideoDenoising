@@ -9,8 +9,7 @@
 
 // constructor taking the denoising intensity or threshold value, together with height and width of video
 // initialises frame of variance values, movement tracing frame and the previous frame
-ImageProcessor::ImageProcessor(float intensity, int height, int width) {
-	threshold          = intensity;
+ImageProcessor::ImageProcessor(int height, int width) {
 	frame_height       = height;
 	frame_width        = width;
 	variances          = cv::Mat::zeros(frame_height, frame_width * 3, CV_32FC1);
@@ -37,35 +36,17 @@ cv::Mat ImageProcessor::processFrame(cv::Mat currentframe, int framenum) {
 		for (int i = 0; i < frame_height; i++) {
 			for (int j = 0; j < frame_width * 3; j++) { 
 
-				uint8_t movement_count   = movement_hist.at<uint8_t>(i, j); // previous (already denoised) pixel
-				uint8_t previous_pixel   = previous.at<uint8_t>(i, j);      // current (raw) pixel
-				uint8_t current_pixel    = currentframe.at<uint8_t>(i, j);  // keeping track of how long pixel hasn't moved
+				uint8_t previous_pixel = previous.at<uint8_t>(i, j);      // previous (already denoised) pixel
+				uint8_t current_pixel  = currentframe.at<uint8_t>(i, j);  // raw pixel from current frame
+				uint8_t movement_count = movement_hist.at<uint8_t>(i, j); // keeping track of how long pixel hasn't moved
 
-				if (pixelIsMoving(j, variances.at<float>(i, j))) {
-					// reset movement count to one and do not denoise pixel
-					newframe.at<uint8_t>(i, j) = current_pixel;
-					movement_count = 1;
-				}
-				else {
+				float variance         = variances.at<float>(i, j);              // get variance for current pixel
+				float coefficient      = getVarianceBasedCoefficient(variance);  // get denoising coefficient
 
-					if (movement_count < 3) {
-						// do not denoise pixel until movement count has reached 3 to avoid artifacts
-						newframe.at<uint8_t>(i, j) = current_pixel;
-						movement_count += 1;
+				// calculate movement count based on coefficient
+				movement_count = updateMovementCounter(movement_count, coefficient);
 
-					}
-					else if (movement_count >= 3 && movement_count < 255) {
-						// apply temporal denoising once movement count above or equals 3
-						newframe.at<uint8_t>(i, j) = averagePixelsTemporal(previous_pixel, current_pixel, movement_count);
-						movement_count += 1;
-					}
-					else {
-						// avoid uint8_t overflow by assigning previous pixel
-						newframe.at<uint8_t>(i, j) = previous_pixel;
-					}
-
-
-				}
+				newframe.at<uint8_t>(i, j) = averagePixelsTemporal(previous_pixel, current_pixel, movement_count);
 
 				// update movement history of this pixel
 				movement_hist.at<uint8_t>(i, j) = movement_count;
@@ -88,30 +69,18 @@ cv::Mat ImageProcessor::processFrame(cv::Mat currentframe, int framenum) {
 }
 
 
-// defines a pixel to be moving if preceding pixels' variance about specified threshold
-// currently does not denoise edges of frame
-bool ImageProcessor::pixelIsMoving(int j, float variance_val) {
-	updateSurroundingVariances(variance_val);
-	if (j < 5) {
-		return false;
-	}
-	for (int var_index = 0; var_index < 5; var_index++) {
-		if (surrounding_variances[var_index] > threshold) {
-			return true;
-		}
-	}
-	return false;
+
+// get variance-based sigmoid coefficient
+float ImageProcessor::getVarianceBasedCoefficient(float variance) {
+	float coefficient = 1.0 / (1.0 + 4.0 * pow(0.8, variance - 12.0));
+	return coefficient;
 }
 
 
-// helper function to update the variances of the colour values of two neighbouring pixels -
-// given the structure of cv::Mat, the three colour channels are located next to each other for every pixel
-void ImageProcessor::updateSurroundingVariances(float variance_val) {
-	surrounding_variances[variance_index] = variance_val;
-	variance_index += 1;
-	if (variance_index > 2) {
-		variance_index = 0;
-	}
+// use sigmoid function to adjust movement counter - no threshold needed
+uint8_t ImageProcessor::updateMovementCounter(uint8_t movement, float coefficient) {
+	uint8_t new_value = round( float(movement) * (1.0 - coefficient) ) + 1;
+	return new_value;
 }
 
 
