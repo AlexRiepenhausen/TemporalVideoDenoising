@@ -70,6 +70,7 @@ int main() {
 	// create video writer object and initialise processing unit
 	ImageProcessor proc(frame_height, frame_width);
 	cv::VideoWriter video(output_file_name, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), fps, cv::Size(frame_width, frame_height));
+	video.set(cv::VIDEOWRITER_PROP_QUALITY, 1.0);
 
 	// iterate over every single frame in the video
 	int framecount = 1;

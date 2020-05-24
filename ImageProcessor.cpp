@@ -7,14 +7,14 @@
 #include "ImageProcessor.h"
 
 
-// constructor taking the denoising intensity or threshold value, together with height and width of video
+// constructor taking the height and width of video
 // initialises frame of variance values, movement tracing frame and the previous frame
 ImageProcessor::ImageProcessor(int height, int width) {
-	frame_height       = height;
-	frame_width        = width;
-	variances          = cv::Mat::zeros(frame_height, frame_width * 3, CV_32FC1);
-	previous           = cv::Mat::zeros(frame_height, frame_width, CV_8UC3);
-	movement_hist      = cv::Mat::zeros(frame_height, frame_width, CV_8UC3);
+	frame_height  = height;
+	frame_width   = width;
+	vars          = cv::Mat::zeros(frame_height, frame_width * 3, CV_32FC1);
+	previous      = cv::Mat::zeros(frame_height, frame_width, CV_8UC3);
+	movement_hist = cv::Mat::zeros(frame_height, frame_width, CV_8UC3);
 }
 
 
@@ -40,7 +40,7 @@ cv::Mat ImageProcessor::processFrame(cv::Mat currentframe, int framenum) {
 				uint8_t current_pixel  = currentframe.at<uint8_t>(i, j);  // raw pixel from current frame
 				uint8_t movement_count = movement_hist.at<uint8_t>(i, j); // keeping track of how long pixel hasn't moved
 
-				float variance         = variances.at<float>(i, j);              // get variance for current pixel
+				float variance         = vars.at<float>(i, j);                   // get variance for current pixel
 				float coefficient      = getVarianceBasedCoefficient(variance);  // get denoising coefficient
 
 				// calculate movement count based on coefficient
@@ -69,10 +69,81 @@ cv::Mat ImageProcessor::processFrame(cv::Mat currentframe, int framenum) {
 }
 
 
+// takes current frame and puts it into the frame buffer queue
+void ImageProcessor::updateFrameBuffer(cv::Mat frame) {
+	frame_buffer[frame_buffer_index] = frame;
+	incrementFrameBufferIndex();
+}
+
+
+// get the preceding frame buffer index
+void ImageProcessor::incrementFrameBufferIndex() {
+	frame_buffer_index += 1;
+	if (frame_buffer_index > 3) {
+		if (initialised == false) {
+			initialisePreviousFrame();
+			initialised = true;
+		}
+		frame_buffer_index = 0;
+	}
+}
+
+
+// intitialises previous frame from frame buffer - happens once before denoising starts
+void ImageProcessor::initialisePreviousFrame() {
+	for (int i = 0; i < frame_height; i++) {
+		for (int j = 0; j < frame_width * 3; j++) {
+			previous.at<uint8_t>(i, j) = frame_buffer[frame_buffer_index - 2].at<uint8_t>(i, j);
+		}
+	}
+}
+
+
+// gets variance values for every pixel before denosing starts
+void ImageProcessor::calculateVariances() {
+	for (int i = 0; i < frame_height; i++) {
+		for (int j = 0; j < frame_width * 3; j++) {
+			float temp[4];
+			for (int k = 0; k < 4; k++) 
+				temp[k] = frame_buffer[k].at<uint8_t>(i, j);
+			vars.at<float>(i, j) = getVariance(temp);
+		}
+	}
+}
+
+
+// helper function to calculate variance from array
+float ImageProcessor::getVariance(float* data) {
+	float mean = getMean(data);
+	float temp = 0;
+	for (size_t i = 0; i < 4; i++)
+		temp += (data[i] - mean)*(data[i] - mean);
+	return temp / 4.0;
+}
+
+
+// helper function to calculate mean from array
+float ImageProcessor::getMean(float* data) {
+	float sum = 0.0;
+	for (size_t i = 0; i < 4; i++)
+		sum += data[i];
+	return sum / 4.0;
+}
+
+
+// get highest variance from all 3 colour channels of a pixel
+float ImageProcessor::getMaxVarianceForPixel(int i, int j) {
+	if (j % 3 == 0) {
+		float var_list[3] = {vars.at<float>(i, j), vars.at<float>(i, j + 1), vars.at<float>(i, j + 2)};
+		pixel_variance    = *std::max_element(var_list, var_list + 3);
+	}
+	return pixel_variance;
+}
+
 
 // get variance-based sigmoid coefficient
 float ImageProcessor::getVarianceBasedCoefficient(float variance) {
-	float coefficient = 1.0 / (1.0 + 4.0 * pow(0.8, variance - 12.0));
+	float coefficient = 1.0 / (1.0 + pow(0.8, variance - 18.0));
 	return coefficient;
 }
 
@@ -92,43 +163,13 @@ uint8_t ImageProcessor::averagePixelsTemporal(uint8_t previous, uint8_t current,
 }
 
 
-// gets variance values for every pixel before denosing starts
-void ImageProcessor::calculateVariances() {
+// overwrites the previous frame with whatever frame you specifiy
+void ImageProcessor::updatePreviousFrame(cv::Mat current) {
 	for (int i = 0; i < frame_height; i++) {
 		for (int j = 0; j < frame_width * 3; j++) {
-			float temp[4];
-			for (int k = 0; k < 4; k++) {
-				temp[k] = frame_buffer[k].at<uint8_t>(i, j);
-			}
-			variances.at<float>(i, j) = getVariance(temp);
+			previous.at<uint8_t>(i, j) = current.at<uint8_t>(i, j);
 		}
 	}
-}
-
-
-// helper function to calculate mean from array
-float ImageProcessor::getMean(float* data) {
-	float sum = 0.0;
-	for (size_t i = 0; i < 4; i++)
-		sum += data[i];
-	return sum / 4.0;
-}
-
-
-// helper function to calculate variance from array
-float ImageProcessor::getVariance(float* data) {
-	float mean = getMean(data);
-	float temp = 0;
-	for (size_t i = 0; i < 4; i++)
-		temp += (data[i] - mean)*(data[i] - mean);
-	return temp / 4.0;
-}
-
-
-// takes current frame and puts it into the frame buffer queue
-void ImageProcessor::updateFrameBuffer(cv::Mat frame) {
-	frame_buffer[frame_buffer_index] = frame;
-	incrementFrameBufferIndex();
 }
 
 
@@ -141,42 +182,9 @@ void ImageProcessor::replaceFrameBuffer(cv::Mat frame) {
 
 
 // get the preceding frame buffer index
-void ImageProcessor::incrementFrameBufferIndex() {
-	frame_buffer_index += 1;
-	if (frame_buffer_index > 3) {
-		if (initialised == false) {
-			initialisePreviousFrame();
-			initialised = true;
-		}
-		frame_buffer_index = 0;
-	}
-}
-
-
-// get the preceding frame buffer index
 int ImageProcessor::getPreviousFrameBufferIndex() {
 	if (frame_buffer_index == 0) {
 		return 3;
 	}
 	return frame_buffer_index - 1;
-}
-
-
-// intitialises previous frame from frame buffer - happens once before denoising starts
-void ImageProcessor::initialisePreviousFrame() {
-	for (int i = 0; i < frame_height; i++) {
-		for (int j = 0; j < frame_width * 3; j++) {
-			previous.at<uint8_t>(i, j) = frame_buffer[frame_buffer_index-2].at<uint8_t>(i, j);
-		}
-	}
-}
-
-
-// overwrites the previous frame with whatever frame you specifiy
-void ImageProcessor::updatePreviousFrame(cv::Mat current) {
-	for (int i = 0; i < frame_height; i++) {
-		for (int j = 0; j < frame_width * 3; j++) {
-			previous.at<uint8_t>(i, j) = current.at<uint8_t>(i, j);
-		}
-	}
 }
