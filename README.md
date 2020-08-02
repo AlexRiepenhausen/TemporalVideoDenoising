@@ -1,4 +1,4 @@
-# Temporal Video Denoising for Nonmoving Smartphone Videos <br/>
+# Temporal Video Denoising for Nonmoving Videos <br/>
 
 This small passion project of mine is designed to tackle one of the problems I have as a hobbyist filmmaker.<br/>
 Often times, I find myself in a situation where I see something interesting and I want to film it, <br/>
@@ -36,9 +36,17 @@ If we look at the graph below, we can see how the rolling variance reacts to the
 
 ### Averaging Nonmoving Parts of the Image
 
-As we have seen, the rolling average is quite useful in establishing
+As we have seen, the rolling average is quite useful for determining whether something should be considered <br/>
+noise or legitimate movement. The table below shows a numerical example of how rolling variance is affected <br/>
+by sudden changes in pixel value. Also, the last row in said table shows us how many of the past frames should <br/>
+be considered in the image or frame stacking process given the changes in pixel value. <br/>
+With that, the next step is to find a way of connecting the variance values with the required number of past frames. <br/>
 
 ![alt text](https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/pixelvalues.png)
-![alt text](https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example03_after.png)
+
+The variance values can be used to compute an averaging score, i.e. the probability of a pixel value being legitimate movement. <br/>
+If this value is zero, then the pixel is guaranteed to be random noise. Conversely, a value of one represents real movement. <br/>
+
+![alt text](https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/determining_avg_strength.png)
 
 
