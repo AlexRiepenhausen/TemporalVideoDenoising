@@ -44,9 +44,15 @@ With that, the next step is to find a way of connecting the variance values with
 
 ![alt text](https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/pixelvalues.png)
 
-The variance values can be used to compute an averaging score, i.e. the probability of a pixel value being legitimate movement. <br/>
-If this value is zero, then the pixel is guaranteed to be random noise. Conversely, a value of one represents real movement. <br/>
+The variance values can be used for computing an averaging score, i.e. the probability of a pixel value being <br/>
+legitimate movement. If this value is zero, then the pixel is guaranteed to be random noise. <br/>
+Conversely, a value of one represents real movement within the scope of this model. A sigmoid function with hand-tuned <br/>
+parameters was chosen for this task. Originally, a hard variance threshold was considered but ultimately abandoned <br/>
+due to remaining noise artifacts. With the sigmoid function, variance edge cases are less jarring in the resulting video. <br/>
 
 ![alt text](https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/determining_avg_strength.png)
 
+Now that we have the averaging score, we can 
+
+![alt text](https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/calculation.png)
 
