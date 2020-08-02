@@ -1,4 +1,4 @@
-# Temporal Video Denoising for Nonmoving Videos <br/>
+# Temporal Video Denoising Algorithm <br/>
 
 This small passion project of mine is designed to tackle one of the problems I have as a hobbyist filmmaker.
 Often times, I find myself in a situation where I see something interesting and I want to film it, 
