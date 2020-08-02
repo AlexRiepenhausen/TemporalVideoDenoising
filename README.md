@@ -70,10 +70,32 @@ when computing the new average pixel value: <br/>
 
 ## The Results?
 So much for the theory. What about the actual results? 
-<p align="center">
-  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example01_before.png" width="500">
-</p>
 
-<p align="center">
-  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example01_after.png" width="500">
-</p>
+<div class="row">
+  <div class="column">
+    <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example01_before.png" width="450">
+  </div>
+  <div class="column">
+    <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example01_after.png" width="450">
+  </div>
+</div>
+
+<div class="row">
+  <div class="column">
+    <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example02_before.png" width="450">
+  </div>
+  <div class="column">
+    <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example02_after.png" width="450">
+  </div>
+</div>
+
+<div class="row">
+  <div class="column">
+    <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example03_before.png" width="450">
+  </div>
+  <div class="column">
+    <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example03_after.png" width="450">
+  </div>
+</div>
+
+
