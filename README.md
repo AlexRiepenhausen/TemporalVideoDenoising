@@ -24,7 +24,9 @@ In between these dips the pixel values seem to be dancing around some mean value
 This phenomenon is the image noise we want to get rid off, and the way to do it is by smoothing the RGB curve without
 distorting the parts representing real movement too much. <br/>
 
-![alt text](https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/pixelvals.png)
+<p align="center">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/pixelvals.png" width="500">
+</p>
 
 ### Separating Noise from Real Movement
 
