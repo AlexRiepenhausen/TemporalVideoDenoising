@@ -34,7 +34,9 @@ One possible choice for distinguishing between noise and real movement is the ro
 in this case four. Variance represents the squared distance between the mean and the individual pixel values. <br/>
 If we look at the graph below, we can see how the rolling variance reacts to the previously mentioned dips and plateaus: <br/>
 
-![alt text](https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/variance_four_frames.png)
+<p align="center">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/variance_four_frames.png" width="500">
+</p>
 
 ### Averaging Nonmoving Parts of the Image
 
@@ -44,7 +46,9 @@ by sudden changes in pixel value. Also, the last row in said table shows us how 
 be considered in the image or frame stacking process given the changes in pixel value. <br/>
 With that, the next step is to find a way of connecting the variance values with the required number of past frames. <br/>
 
-![alt text](https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/pixelvalues.png)
+<p align="center">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/pixelvalues.png" width="500">
+</p>
 
 The variance values can be used for computing an averaging score, i.e. the probability of a pixel value being <br/>
 legitimate movement. If this value is zero, then the pixel is guaranteed to be random noise. <br/>
@@ -52,9 +56,24 @@ Conversely, a value of one represents real movement within the scope of this mod
 parameters was chosen for this task. Originally, a hard variance threshold was considered but ultimately abandoned <br/>
 due to remaining noise artifacts. With the sigmoid function, variance edge cases are less jarring in the resulting video. <br/>
 
-![alt text](https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/determining_avg_strength.png)
+<p align="center">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/determining_avg_strength.png" width="500">
+</p>
 
-Now that we have the averaging score, we can 
+Now that we have the averaging score, we can perform a series of steps to determine how much attention we should pay to <br/>
+the current pixel in comparison to the previous pixels. The higher the score, the less weight the previous pixels get <br/>
+when computing the new average pixel value: <br/>
 
-![alt text](https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/calculation.png)
+<p align="center">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/graphics/calculation.png" width="500">
+</p>
 
+## The Results?
+So much for the theory. What about the actual results? 
+<p align="center">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example01_before.png" width="500">
+</p>
+
+<p align="center">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example01_after.png" width="500">
+</p>
