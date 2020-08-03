@@ -69,30 +69,30 @@ when computing the new average pixel value:
 </p>
 
 ## The Results?
-So much for the theory. Here are some actual side by side comaprisons between denoised and original video frames:
+So much for the theory. Here are some actual side by side comaprisons between denoised and original video frames. The frames themselves are cropped to make the differences more pronounced:
 
 <p align="center">
-  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example01_before.png" width="500">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example01_before.png" width="550">
 </p>
 
 <p align="center">
-  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example01_after.png" width="500">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example01_after.png" width="550">
 </p>
 
 <p align="center">
-  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example02_before.png" width="500">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example02_before.png" width="550">
 </p>
 
 <p align="center">
-  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example02_after.png" width="500">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example02_after.png" width="550">
 </p>
 
 <p align="center">
-  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example03_before.png" width="500">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example03_before.png" width="550">
 </p>
 
 <p align="center">
-  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example03_after.png" width="500">
+  <img src="https://github.com/AlexRiepenhausen/TemporalVideoDenoising/blob/master/examples/example03_after.png" width="550">
 </p>
 
 ## Final Thoughts
