@@ -11,9 +11,7 @@ Hence, I have decided to spend about two weeks on implementing a denoising algor
 
 In photography, there is a technique known as **image stacking** where you take several images of a single scene
 and average them, effectively simulating a longer exposure time. Given the assumption of image noise being a Gaussian
-distribution, the more images you average the better your signal-to-noise ratio will be. 
-Still, implementing this technique for video is going to be a bit more tricky,
-simply because the scene most likely will contain moving objects and may be changing due to camera movement.
+distribution, the more images you average the better your signal-to-noise ratio will be. However, implementing this technique for video is much more difficult because the scene will most likely contain moving objects or change entirely due to camera movement.
 Luckily, there are ways of implementing this technique for video assuming a non-moving camera - it's called **temporal denoising** 
 
 ## The Implementation
@@ -93,9 +91,7 @@ So much for the theory. Here are some actual side by side comaprisons between de
 
 ## Final Thoughts
 
-The algorithm works reasonably well in most situations where there is enough contrast between moving parts and nonmoving parts of the image. Intuitively, this makes a lot of sense if one considers that we are separating noise from movement by means of variance between the last four pixels. With low contrast situations, this method starts to break down and one starts to see artifacts in the final video.
-Additionally, this method only really works if the camera is not moving as mentioned previously. However, the algorithm has no problems whatsoever in dealing with some camera shake or very slow movement. <br/><br/>
-Despite these limitations, I was still very satisfied with the results this algorithm gave me. <br/>
-Basically, whenever I take out my smartphone at night and hold it steady, I can be 90% sure that I can remove the video noise in post processing. And to me, that is actually good enough. If my goal is to shoot really stunning footage, I will do my preparation beforehand and take my camera and lenses with me. The purpose of the smartphone in this context is its function as a secondary camera that you always have with you no matter what, something that cannot be said about professional camera equipment.
+The algorithm works reasonably well in most situations with high levels of contrast. Intuitively, this makes a lot of sense since we are separating noise from movement by means of variance. On the flip side, this method introduces a lot of movement artifacts in low contrast situations. While I mentioned previously that this method only works if the camera is not moving, it has no problems whatsoever in dealing with some camera shake or very slow movement. <br/><br/>
+Despite some limitations, I was still very satisfied with the results. Basically, whenever I take out my smartphone at night and hold it steady, I have the peace of mind knowing that I have tool for removing noise in post processing. If my goal is to shoot really stunning footage, I will do my preparation beforehand and take my camera and lenses with me. Hence, the ultimate purpose of my smartphone is its function as a secondary camera that I always have with me - and if I can expand its technical capabilities that's even better.
 
 
