@@ -4,8 +4,8 @@ This small passion project of mine is designed to tackle one of the problems I h
 Often times, I find myself in a situation where I see something interesting and I want to film it, 
 but the only device available to me is my smartphone. While I do own a camera, I cannot always carry it around with me. 
 Thus, the combination of a really small smartphone sensor with low light conditions inevitably results in very noisy footage. 
-Even though the subject may be interesting, the results can sometimes be borderline unuseable.
-Hence, I have decided to spend about two weeks on implementing a denoising algorithm to help me out with this problem.
+Even though the subject may be interesting, the results can sometimes be borderline unusable.
+Hence, I have decided to spend some time on implementing a denoising algorithm to help me out with this problem.
 
 ## The Idea
 
